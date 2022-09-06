@@ -1,7 +1,7 @@
 import {
   AdditiveOperator, BinaryExpressionNode,
-  CallExpressionNode, IdentifierToken, Node, NumericLiteralNode,
-  NumericLiteralToken, Program, Token
+  CallExpressionNode,IdentifierToken, Node, NumericLiteralNode,
+  NumericLiteralToken, Program, Token, StringNode, Text, CallExpressionNode1
 } from './types';
 
 export function parser(tokens: Token[]): Program {
@@ -12,8 +12,14 @@ export function parser(tokens: Token[]): Program {
   function parse(): Node {
     const token = tokens[current]!;
 
+
     if (token.type === 'Identifier') {
       return parseCallExpression(token);
+    }
+
+    if (token.type === 'Text') {
+      const next = tokens[current + 1];
+      return parseString(token);
     }
 
     if (token.type === 'NumericLiteral') {
@@ -24,6 +30,7 @@ export function parser(tokens: Token[]): Program {
         return parseNumericLiteral(token);
       }
     }
+
 
     throw new SyntaxError(`Unknown Token: ${token.type}`);
   }
@@ -57,10 +64,18 @@ export function parser(tokens: Token[]): Program {
     return { type: 'CallExpression', identifier, argument }
   }
 
+
   function parseNumericLiteral(token: NumericLiteralToken): NumericLiteralNode {
     current++;
     return { type: 'NumericLiteral', value: token.value }
   }
+
+  function parseString(token: Text): StringNode {
+    current++;
+    return { type: 'Text', value: token.value }
+  }
+
+  
 
   while (current < tokens.length) {
     program.body.push(parse());

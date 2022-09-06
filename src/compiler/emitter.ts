@@ -1,4 +1,4 @@
-import { BinaryExpressionNode, CallExpressionNode, NumericLiteralNode, Program, Node } from './types';
+import { BinaryExpressionNode, CallExpressionNode,StringNode, NumericLiteralNode, Program, Node} from './types';
 
 export function emitter(program: Program): string {
   function emit(node: Node): string {
@@ -9,9 +9,16 @@ export function emitter(program: Program): string {
         return emitBinaryExpression(node);
       case 'CallExpression':
         return emitCallExpression(node);
+      case 'Text':
+        return emitText(node);
       default:
         throw new SyntaxError('Unknown Node');
     }
+  }
+
+
+  function emitText(node: StringNode) {
+    return node.value;
   }
 
   function emitNumericLiteral(node: NumericLiteralNode) {

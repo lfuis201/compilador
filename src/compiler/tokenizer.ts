@@ -53,7 +53,19 @@ export function tokenizer(input: string): Token[] {
       continue;
     }
 
-    throw new SyntaxError(`Kya kar rha hai tu??...Unexpected token: "${char}"`);
+
+    const TEXT = /(\')[a-z]*?(\')/g;
+    if (TEXT.test(char)) {
+      let value = '';
+      while (TEXT.test(char)) {
+        value += char;
+        char = input[++cursorPos]!;
+      }
+      tokens.push({ type: 'Text', value });
+      continue;
+    }
+
+    throw new SyntaxError(`Unexpected token: "${char}"`);
   }
 
   return tokens;
